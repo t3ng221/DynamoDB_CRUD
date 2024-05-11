@@ -30,7 +30,7 @@ exports.createUser = async (id, name) => {
   }
 };
 
-// Function to get users details by ID
+
 exports.getUserDetails = async (userId) => {
   const params = {
     TableName: "users",
@@ -49,7 +49,7 @@ exports.getUserDetails = async (userId) => {
   }
 };
 
-// Function to update user details
+
 exports.updateUser = async (id, name) => {
   const params = {
     TableName: "users",
@@ -76,7 +76,6 @@ exports.updateUser = async (id, name) => {
   }
 };
 
-// Function to delete a userId by ID
 exports.deleteUser = async (id) => {
   const params = {
     TableName: "users",
