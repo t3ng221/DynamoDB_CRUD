@@ -4,11 +4,14 @@ const {
   removeUser,
   updateUser,
   createUser,
+  getUserByEmail,
 } = require("../controller/users");
 const router = new Router();
 
+router.get("/user/:email", getUserByEmail);
 router.get("/user/:id", getUser);
-router.put("/create", createUser);
+
+router.post("/create", createUser);
 router.delete("/delete/:id", removeUser);
 router.put("/update/:id", updateUser);
 

@@ -1,22 +1,21 @@
 const AWS = require("aws-sdk");
-const dotenv = require("dotenv");
-dotenv.config();
 
 AWS.config.update({
-  accessKeyId: "uiegal",
-  secretAccessKey: "gynlvr",
+  accessKeyId: "0ihyh",
+  secretAccessKey: "gyzpffognlvr",
   endpoint: "http://localhost:8000",
   region: "us-east-1",
 });
 
 const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: "2012-08-10" });
 
-exports.createUser = async (id, name) => {
+exports.createUser = async (id, name, email) => {
   const params = {
     TableName: "users",
     Item: {
       id: id,
       name: name,
+      email: email,
     },
   };
 
@@ -29,7 +28,6 @@ exports.createUser = async (id, name) => {
     throw err;
   }
 };
-
 
 exports.getUserDetails = async (userId) => {
   const params = {
@@ -48,7 +46,23 @@ exports.getUserDetails = async (userId) => {
     throw err;
   }
 };
+exports.getUserDetailsByEmail = async (email) => {
+  const params = {
+    TableName: "users",
+    Key: {
+      email: email,
+    },
+  };
 
+  try {
+    const data = await docClient.query(params).promise();
+    console.log("User details BY Email:", data.Item);
+    return data.Item;
+  } catch (err) {
+    console.error("Error getting User details by email:", err);
+    throw err;
+  }
+};
 
 exports.updateUser = async (id, name) => {
   const params = {
@@ -87,7 +101,7 @@ exports.deleteUser = async (id) => {
   try {
     const data = await docClient.delete(params).promise();
     console.log("User deleted successfully:", data);
-    return data;
+    return true;
   } catch (err) {
     console.error("Error deleting User:", err);
     throw err;
