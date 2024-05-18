@@ -1,10 +1,12 @@
 const AWS = require("aws-sdk");
+const dotenv = require("dotenv");
 
+dotenv.config();
 AWS.config.update({
-  accessKeyId: "0ihyh",
-  secretAccessKey: "gyzpffognlvr",
-  endpoint: "http://localhost:8000",
-  region: "us-east-1",
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+  endpoint: process.env.DYNAMODB_ENDPOINT,
 });
 
 const docClient = new AWS.DynamoDB.DocumentClient({ apiVersion: "2012-08-10" });
@@ -20,9 +22,8 @@ exports.createUser = async (id, name, email) => {
   };
 
   try {
-    const data = await docClient.put(params).promise();
-    console.log("User created successfully:", data);
-    return data;
+    await docClient.put(params).promise();
+    console.log("User created successfully:");
   } catch (err) {
     console.error("Error creating User:", err);
     throw err;
@@ -39,8 +40,8 @@ exports.getUserDetails = async (userId) => {
 
   try {
     const data = await docClient.get(params).promise();
-    console.log("User details:", data.Item);
-    return data.Item;
+    console.log("User details:", data);
+    return data;
   } catch (err) {
     console.error("Error getting User details:", err);
     throw err;
@@ -49,15 +50,23 @@ exports.getUserDetails = async (userId) => {
 exports.getUserDetailsByEmail = async (email) => {
   const params = {
     TableName: "users",
-    Key: {
-      email: email,
+    IndexName: "email",
+    KeyConditionExpression: "#email = :email",
+    ExpressionAttributeNames: {
+      "#email": "email",
+    },
+    ExpressionAttributeValues: {
+      ":email": email,
     },
   };
 
   try {
     const data = await docClient.query(params).promise();
-    console.log("User details BY Email:", data.Item);
-    return data.Item;
+    console.log("User details BY Email:", data.Items);
+    const userDetails = data.Items[0];
+    if (userDetails) {
+      return { name: userDetails.name, email: userDetails.email };
+    }
   } catch (err) {
     console.error("Error getting User details by email:", err);
     throw err;

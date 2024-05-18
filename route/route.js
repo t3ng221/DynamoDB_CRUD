@@ -8,11 +8,11 @@ const {
 } = require("../controller/users");
 const router = new Router();
 
-router.get("/user/:email", getUserByEmail);
+router.get("/users/email/:email", getUserByEmail);
 router.get("/user/:id", getUser);
 
-router.post("/create", createUser);
+router.post("/registration", createUser);
 router.delete("/delete/:id", removeUser);
-router.put("/update/:id", updateUser);
+router.put("/user/update/:id", updateUser);
 
 module.exports = router;
